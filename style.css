@@ -21,3 +21,29 @@ body {
    min-height: 100vh;
    height: 100%;
 }
+
+#game-container {
+    height: 600px;
+    width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#ttt-grid {
+    height:310px;
+    width: 310px;
+    background-color: var(--dark-background);
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+}
+
+button {
+    height: 100px;
+    width: 100px;
+    border-style: none;
+    background-color: var(--light-background);
+    font-size: 4rem;
+}

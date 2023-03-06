@@ -1,8 +1,10 @@
 :root {
     --dark-text: rgb(65, 69, 81);
-    --light-text: rgb(124, 126, 136);
+    --light-text: rgb(235, 236, 241);
     --light-background: rgb(246 247 251);
+    --light-background-hover: rgb(235, 238, 245);
     --dark-background:  #2f323d;
+    --dark-background-hover: #42475a;
     --border-radius: 8px;
 }
 
@@ -20,14 +22,21 @@ body {
    font-family: Roboto, sans-serif;
    min-height: 100vh;
    height: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: top;
 }
 
 #game-container {
     height: 600px;
     width: 600px;
+    
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
+    padding-top: 60px;
+    gap: 20px;
 }
 
 #ttt-grid {
@@ -40,10 +49,33 @@ body {
     gap: 5px;
 }
 
-button {
+.ttt-grid-cell {
     height: 100px;
     width: 100px;
     border-style: none;
     background-color: var(--light-background);
     font-size: 4rem;
+}
+
+
+.btn-reset-game {
+    height: 60px;
+    width: 150px;
+    font-size: 2rem;
+    border-style: solid;
+    border-color: var(--dark-background);
+    border-radius: 5px;
+    padding: 5px;
+    background-color: var(--dark-background);
+    color: var(--light-text);
+}
+
+
+/* Interaction */
+.btn-reset-game:hover {
+    background-color: var(--dark-background-hover);
+}
+
+.ttt-grid-cell:hover {
+    background-color: var(--light-background-hover);
 }

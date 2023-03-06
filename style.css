@@ -1,0 +1,23 @@
+:root {
+    --dark-text: rgb(65, 69, 81);
+    --light-text: rgb(124, 126, 136);
+    --light-background: rgb(246 247 251);
+    --dark-background:  #2f323d;
+    --border-radius: 8px;
+}
+
+*,
+*::after,
+*::before {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+}
+
+body {
+   margin: 0;
+   background-color: var(--light-background);
+   font-family: Roboto, sans-serif;
+   min-height: 100vh;
+   height: 100%;
+}

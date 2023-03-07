@@ -55,6 +55,7 @@ body {
     border-style: none;
     background-color: var(--light-background);
     font-size: 4rem;
+    overflow: hidden;
 }
 
 

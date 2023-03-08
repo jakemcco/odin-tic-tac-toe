@@ -7,8 +7,6 @@
 const gameOptions = "empty for now"
 
 
-
-
 /* Button Function Bindings */
 const gridButtons = Array.from(document.getElementsByClassName("ttt-grid-cell"));
 
@@ -26,7 +24,6 @@ resetButton.addEventListener('click', () => {
 
 
 const userInputManager = (() => {
-
     const reset = () => {
         gameManager.newGame();
     };
@@ -38,7 +35,6 @@ const userInputManager = (() => {
 
     return {reset, inputReceived};
 })();
-
 
 
 const userDisplayManager = (() =>{
@@ -57,11 +53,7 @@ const userDisplayManager = (() =>{
 })();
 
 
-
-
-
 const serverBoard = (() => {
-
     const _gridDefault = [
         [0, 0, 0],
         [0, 0, 0],
@@ -71,7 +63,10 @@ const serverBoard = (() => {
     let grid = _gridDefault;
 
     const reset = () => {
-        grid.splice(0, grid.length, [0, 0, 0], [0, 0, 0], [0, 0, 0]);
+        //grid.splice(0, grid.length, [0, 0, 0], [0, 0, 0], [0, 0, 0]);// This also works
+        grid.forEach((item, index) => {
+            grid[index] = [0, 0, 0]; 
+        });
     };
 
     const getGrid = () => {
@@ -101,8 +96,8 @@ const player = (playerName, playerType, playerMarker, playerTrackerVal) => {
 
 
 const gameManager = (() => {
-
     let players = [];
+    let gameResult;
     let isGameOver = false;
     let round = 1;
     let activePlayer;
@@ -151,59 +146,93 @@ const gameManager = (() => {
         if (!isGameOver) {
             serverBoard.changeVal(xCoord, yCoord, activePlayer.trackerVal);
             userDisplayManager.updateButton(xCoord, yCoord, activePlayer.marker);
-            round++;
-            setActivePlayer();
-        }
-        else {
-            declareWinner();
+            evalGameOver();
+
+            if (!isGameOver){
+                round++;
+                setActivePlayer();
+            };
+
+        };
+    };
+
+    //Evaluate 8 possible lines, 3 rows, 3 columns, 2 diagonals
+    const evalGameOver = () => {
+                
+        const checkRows = () => {
+            for  (let i=0; i<3; i++) {
+                const rowSum = serverBoard.getGrid()[i][0] + serverBoard.getGrid()[i][1] + serverBoard.getGrid()[i][2];
+                if (rowSum == 3) {
+                    isGameOver = true;
+                    return declareGameResult(3);
+                }
+                else if (rowSum == -3){
+                    isGameOver = true;
+                    return declareGameResult(-3);
+                };
+            };
         };
 
-    }
-        //startTurn
+        const checkCols = () => {
+            for  (let j=0; j<3; j++) {
+                const colSum = serverBoard.getGrid()[0][j] + serverBoard.getGrid()[1][j] + serverBoard.getGrid()[2][j];
+                if (colSum == 3) {
+                    isGameOver = true;
+                    return declareGameResult(3);
+                }
+                else if (colSum === -3){
+                    isGameOver = true;
+                    return declareGameResult(-3);
+                };
+            };
+        };
 
-    /*
-    Action/Turn tracker
-        set starting player
+        const checkDiags = () => {
+            const diag1 = serverBoard.getGrid()[0][0] + serverBoard.getGrid()[1][1] + serverBoard.getGrid()[2][2];
+            const diag2 = serverBoard.getGrid()[2][0] + serverBoard.getGrid()[1][1] + serverBoard.getGrid()[0][2];
 
-        Player action -> evaluate game state against game conclusion criteria
-            if concluded, determine outcome, update display
-            else
-                switch active player, wait for active player action
-
+            if (diag1 == 3 || diag2 == 3) {
+                return declareGameResult(3);
+            }
+            else if (diag1 == -3 || diag2 == -3) {
+                return declareGameResult(-3);
+            };
+        };
         
-        
-        wait for user input
-        validate user input
-            if valid -> update game state
-            if invalid -> wait for user input
-        
-        update game state ->
+        checkRows();
+        if (!isGameOver){
+            checkCols();
+            if (!isGameOver){
+                checkDiags();
+            };
+        };
 
-    */
+        if (round == 9 && !isGameOver) {
+            return declareGameResult('draw');
+        };
 
+    };
 
-     /* Board updater
-     * Board evaluator
-     *      
-     */
+    const declareGameResult = (checkResult) => {
+
+        switch (checkResult) {
+            case 3:
+                console.log(`Player X wins!`);
+                break;
+            case -3:
+                console.log(`Player O wins!`);
+                break;
+
+            case 'draw':
+                console.log(`Game is a Draw!`);
+                break;
+        };
+
+    };
+
     return {getPlayers, createPlayers, newGame, receiveInput, playRound};
 })();
 
 gameManager.newGame();
-/* Game State Manager */
-    /*
-    Game state array
-    Game state evaluator
-    Player
-
-    */
-
-/* Display Manager */
-    /*
-        Clear/reset grid
-        Update grid
-
-    */
-
 
 /* TESTING */

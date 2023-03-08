@@ -14,26 +14,35 @@ const gridButtons = Array.from(document.getElementsByClassName("ttt-grid-cell"))
 
 gridButtons.forEach(item => {
     item.addEventListener('click', (e) => {
-        userBoard.inputReceived(e.target.dataset.x, e.target.dataset.y);
+        userInputManager.inputReceived(e.target.dataset.x, e.target.dataset.y);
     });
 });
 
 const resetButton = document.getElementsByClassName("btn-reset-game")[0];
 
 resetButton.addEventListener('click', () => {
-    userBoard.reset();
+    userInputManager.reset();
 });
 
 
-
-
-/**
- * 
- */
-
-const userBoard = (() => {
+const userInputManager = (() => {
 
     const reset = () => {
+        gameManager.newGame();
+    };
+
+    const inputReceived = (xCoord, yCoord) => {
+        gameManager.receiveInput(xCoord, yCoord);
+
+    };
+
+    return {reset, inputReceived};
+})();
+
+
+
+const userDisplayManager = (() =>{
+    const resetDisplay = () => {
         gridButtons.forEach( item => {
             item.textContent ="";
         });
@@ -44,20 +53,11 @@ const userBoard = (() => {
         _gridButton.textContent = newVal;
     };
 
-    const inputReceived = (xCoord, yCoord) => {
-        const _xCoord = xCoord;
-        const _yCoord = yCoord;
-
-        if (serverBoard.isEmpty(_xCoord, _yCoord)){
-            reset();//myBoard.changeVal(x,y, newVal); //when gameboard changes Val, should call updateDisplay function
-            gridButtons.forEach( item => {
-                item.textContent ="X";
-            });
-        };
-    }
-
-    return {reset, inputReceived, updateButton};
+    return {resetDisplay, updateButton};
 })();
+
+
+
 
 
 const serverBoard = (() => {
@@ -71,7 +71,7 @@ const serverBoard = (() => {
     let grid = _gridDefault;
 
     const reset = () => {
-        grid = _gridDefault;
+        grid.splice(0, grid.length, [0, 0, 0], [0, 0, 0], [0, 0, 0]);
     };
 
     const getGrid = () => {
@@ -79,53 +79,86 @@ const serverBoard = (() => {
     };
 
     const isEmpty = (xCoord, yCoord) => {
-        return (grid[xCoord][yCoord] == 0);
+        return (grid[yCoord][xCoord] == 0);
     };
 
     const changeVal = (xCoord, yCoord, newVal) => {
-        grid[xCoord][yCoord] = newVal;
+        grid[yCoord][xCoord] = newVal;
     };
 
     return {getGrid, reset, isEmpty, changeVal};
 })();
 
 
-const player = (playerID, playerName, playerType, playerMarker) => {
-    const id = playerID; // 1, 2
+const player = (playerName, playerType, playerMarker, playerTrackerVal) => {
     const name = playerName; // string display name
     const type = playerType; // CPU or Human
     const marker = playerMarker; // X or O
+    const trackerVal = playerTrackerVal; // +1 or -1
 
-    return {id, name, type, marker};
+    return {name, type, marker, trackerVal};
 };
 
 
 const gameManager = (() => {
 
     let players = [];
-
-    const getPlayers = () => {
-        return players;
-    }
+    let isGameOver = false;
+    let round = 1;
+    let activePlayer;
 
     const createPlayers = () => {
-        const playerOne = player(1, "Player1", "human", "X");
-        const playerTwo = player(2, "Player2", "cpu", "O");
+        const playerOne = player("PlayerX", "human", "X", 1);
+        const playerTwo = player("PlayerO", "human", "O", -1);
         players = [playerOne, playerTwo]; // Needs gameManager.VARIABLE to set correctly.
     };
 
-    const newGame = () => {
-        serverBoard.reset()
-        userBoard.reset()
-        createPlayers()
-        //resetGamestate
+    const getPlayers = () => {
+        return players;
     };
 
-    // const createPlayers = () => {
-    //     const playerOne = player(1, "Player1", "human", "X");
-    //     const playerTwo = player(2, "Player2", "cpu", "O");
-    //     players = [playerOne, playerTwo];
-    // };
+    const setActivePlayer = () => {
+        if (round % 2) {
+            activePlayer = players[0];
+        } else {
+            activePlayer = players[1];
+        };
+    };
+
+    const resetGameVars = () => {
+        this.players = [];
+        isGameOver = false;
+        round = 1;
+        activePlayer = undefined;
+    };
+
+    const receiveInput = (xCoord, yCoord) => {
+        if (serverBoard.isEmpty(xCoord, yCoord)){
+            playRound(xCoord, yCoord);
+        };
+    };
+
+    const newGame = () => {
+        // Reset gamestates
+        serverBoard.reset()
+        userDisplayManager.resetDisplay()
+        resetGameVars()
+        createPlayers()
+        setActivePlayer();
+    };
+
+    const playRound = (xCoord, yCoord) => {
+        if (!isGameOver) {
+            serverBoard.changeVal(xCoord, yCoord, activePlayer.trackerVal);
+            userDisplayManager.updateButton(xCoord, yCoord, activePlayer.marker);
+            round++;
+            setActivePlayer();
+        }
+        else {
+            declareWinner();
+        };
+
+    }
         //startTurn
 
     /*
@@ -153,9 +186,10 @@ const gameManager = (() => {
      * Board evaluator
      *      
      */
-    return {getPlayers, createPlayers, newGame};
+    return {getPlayers, createPlayers, newGame, receiveInput, playRound};
 })();
 
+gameManager.newGame();
 /* Game State Manager */
     /*
     Game state array

@@ -1,12 +1,13 @@
 
 
+/* TESTING */
+
+// const myBoard = gameBoard();
+// const myUserBoard = userBoard();
+const gameOptions = "empty for now"
 
 
 
-
-
-/** Input Handler 
-*/
 
 /* Button Function Bindings */
 const gridButtons = Array.from(document.getElementsByClassName("ttt-grid-cell"));
@@ -24,9 +25,11 @@ resetButton.addEventListener('click', () => {
 });
 
 
-/** Input Validation
+
+
+/**
  * 
-*/
+ */
 
 const userBoard = (() => {
 
@@ -38,7 +41,6 @@ const userBoard = (() => {
 
     const updateButton = (xCoord, yCoord, newVal) => {
         const _gridButton = document.querySelector(`[data-x="${xCoord}"][data-y="${yCoord}"]`);
-
         _gridButton.textContent = newVal;
     };
 
@@ -58,46 +60,100 @@ const userBoard = (() => {
 })();
 
 
-
-/**
- * Display Update
- * @returns 
- */
-
-    //document.querySelector(`[data-x="${xCoord}"][data-y="${yCoord}"]`);
-
-
-    /* Button event listeners
-        var elements = document.getElementsByClassName("class");
-
-            for (var i=0; i<elements.length; i++) {
-                elements[i].addEventListener("click", function(){…});
-        }
-
-        OR
-
-        Array.from(document.getElementsByClassName("class"))
-            .forEach(function(element){
-                element.addEventListener("click", function(){…});
-        });
-
-        New Game / Reset buttons    
-    */
-
-
 const serverBoard = (() => {
-    let grid = [
+
+    const _gridDefault = [
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0]
-    ]
+    ];
+
+    let grid = _gridDefault;
+
+    const reset = () => {
+        grid = _gridDefault;
+    };
+
+    const getGrid = () => {
+        return grid;
+    };
 
     const isEmpty = (xCoord, yCoord) => {
         return (grid[xCoord][yCoord] == 0);
+    };
+
+    const changeVal = (xCoord, yCoord, newVal) => {
+        grid[xCoord][yCoord] = newVal;
+    };
+
+    return {getGrid, reset, isEmpty, changeVal};
+})();
+
+
+const player = (playerID, playerName, playerType, playerMarker) => {
+    const id = playerID; // 1, 2
+    const name = playerName; // string display name
+    const type = playerType; // CPU or Human
+    const marker = playerMarker; // X or O
+
+    return {id, name, type, marker};
+};
+
+
+const gameManager = (() => {
+
+    let players = [];
+
+    const getPlayers = () => {
+        return players;
     }
 
-    // grid[y][x],
-    return {grid, isEmpty};
+    const createPlayers = () => {
+        const playerOne = player(1, "Player1", "human", "X");
+        const playerTwo = player(2, "Player2", "cpu", "O");
+        players = [playerOne, playerTwo]; // Needs gameManager.VARIABLE to set correctly.
+    };
+
+    const newGame = () => {
+        serverBoard.reset()
+        userBoard.reset()
+        createPlayers()
+        //resetGamestate
+    };
+
+    // const createPlayers = () => {
+    //     const playerOne = player(1, "Player1", "human", "X");
+    //     const playerTwo = player(2, "Player2", "cpu", "O");
+    //     players = [playerOne, playerTwo];
+    // };
+        //startTurn
+
+    /*
+    Action/Turn tracker
+        set starting player
+
+        Player action -> evaluate game state against game conclusion criteria
+            if concluded, determine outcome, update display
+            else
+                switch active player, wait for active player action
+
+        
+        
+        wait for user input
+        validate user input
+            if valid -> update game state
+            if invalid -> wait for user input
+        
+        update game state ->
+
+    */
+
+
+     /* Board updater
+     * Board evaluator
+     *      
+     */
+    return {getPlayers, createPlayers, newGame};
 })();
 
 /* Game State Manager */
@@ -115,7 +171,5 @@ const serverBoard = (() => {
 
     */
 
-/* TESTING */
 
-// const myBoard = gameBoard();
-// const myUserBoard = userBoard();
+/* TESTING */

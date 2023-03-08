@@ -17,44 +17,58 @@
 }
 
 body {
-   margin: 0;
    background-color: var(--light-background);
    font-family: Roboto, sans-serif;
    min-height: 100vh;
    height: 100%;
-   display: flex;
+   background-color:#7c8088;
+   /* display: flex;
    justify-content: center;
    align-items: top;
+   */
+}
+
+.header {
+    padding: 20px;
+    border-bottom: 3px solid var(--dark-background);
+}
+
+.page-title {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: black;
 }
 
 #game-container {
-    height: 600px;
-    width: 600px;
-    
+    padding-top: 60px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding-top: 60px;
-    gap: 20px;
+
+    gap: 30px;
+}
+
+.game-text {
+    font-size: 2.5rem;
 }
 
 #ttt-grid {
-    height:310px;
-    width: 310px;
-    background-color: var(--dark-background);
+    height:544px;
+    width: 544px;
+    border: 2px solid var(--dark-background);
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 5px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
 }
 
 .ttt-grid-cell {
-    height: 100px;
-    width: 100px;
-    border-style: none;
+    height: 180px;
+    width: 180px;
+    border: 1px solid var(--dark-background);
     background-color: var(--light-background);
-    font-size: 4rem;
+    font-size: 6rem;
     overflow: hidden;
 }
 
@@ -64,8 +78,8 @@ body {
     width: 150px;
     font-size: 2rem;
     border-style: solid;
-    border-color: var(--dark-background);
-    border-radius: 5px;
+    border-color: black;
+    border-radius: 8px;
     padding: 5px;
     background-color: var(--dark-background);
     color: var(--light-text);

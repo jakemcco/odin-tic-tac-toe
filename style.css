@@ -21,15 +21,13 @@ body {
    font-family: Roboto, sans-serif;
    min-height: 100vh;
    height: 100%;
-   background-color:#7c8088;
-   /* display: flex;
-   justify-content: center;
-   align-items: top;
-   */
+   background-color:#989eb4; /*#7c8088;*/
+
 }
 
 .header {
     padding: 20px;
+    background-color:#535769;
     border-bottom: 3px solid var(--dark-background);
 }
 
@@ -37,7 +35,7 @@ body {
     text-align: center;
     font-size: 3rem;
     font-weight: bold;
-    color: black;
+    color: var(--light-text);
 }
 
 #game-container {
